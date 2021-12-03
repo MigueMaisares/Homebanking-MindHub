@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/bd2f9cbaf2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <link rel="stylesheet" href="../styles/main.css">
+    <title>Account</title>
+</head>
+  <body class="vh-100 d-flex bg-isabelline">
+    <div class="container-fluid p-0 d-flex flex-column justify-content-between" id="app">
+
+      <nav class="navbar navbar-expand-md navbar-light border-bottom">
+          <div class="container-fluid">
+              <a class="navbar-brand p-0" href="./accounts.html">
+                  <img src="../assets/logo.png" alt="logo banco" height="60">
+              </a>
+              <a class="navbar-brand p-0 me-0" href="./accounts.html">
+                  <img src="../assets/logo-negro.png" alt="logo con letras negras" height="60">
+              </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav ms-auto mb-lg-0 align-items-center">
+                      <li class="nav-item mx-2">
+                        <a class="nav-link" href="./accounts.html">ACCOUNTS</a>
+                      </li>
+                      <li class="nav-item mx-2">
+                        <a class="nav-link" href="./cards.html">CARDS</a>
+                      </li>
+                      <li class="nav-item mx-2">
+                        <a class="nav-link" href="./transfers.html">TRANSFERS</a>
+                      </li>
+                      <li class="nav-item mx-2">
+                        <a class="nav-link" href="./loans.html">LOANS</a>
+                      </li>
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fas fa-user-circle fa-2x"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                          <li><h6 class="dropdown-header">Welcome {{clientes.firstName}}</h6></li>
+                          <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i>  My profile</a></li>
+                          <li><a class="dropdown-item" href="" @click="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                          
+                        </ul>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
+
+      <main class="container-fluid p-0 py-5" v-cloak>
+        <section class="container">
+          <div class="row justify-content-center">
+            <!-- card con boton de crear su primera transaccion -->
+            <div class="col d-flex justify-content-center" v-if="transacciones.length == 0">
+              <div class="mb-5 card shadow" v-cloak>  
+                  <div class="row m-0">
+                  <div class="col-10 col-sm-9 col-md-9">
+                      <div class="card-body px-0">
+                        <p class="card-text">You have no transactions, make one from here.</p>
+                      </div>
+                  </div>
+  
+                  <div class="col-2 col-sm-3 col-md-3 d-flex justify-content-center align-items-center">
+                      <button type="button" class="btn btn-outline-secondary border-0 rounded-3" onclick="window.location.href = '/web/transfers.html'">
+                      <cite title="Makes a transaction">
+                          <i class="fas fa-money-bill-wave fa-3x"></i>
+                      </cite>  
+                      </button>
+                  </div>
+                  </div>
+              </div>
+            </div>
+            
+            <!-- tabla con transacciones registradas -->
+            <div class="col-md-12" v-else>
+              <div class="card shadow">
+                <div class="card-header bg-white border-bottom-0 h-auto">
+                  <div class="row">
+                    <div class="col d-flex align-items-center">
+                      <h4 class="card-title my-0">Transaction list</h4>
+                    </div>
+                    <div class="col d-flex justify-content-end gap-2">
+                      <input type="date" name="desde" id="desde" v-model="desde">
+                      <input type="date" name="hasta" id="hasta" v-model="hasta">
+                      <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-1" @click="exportarPDF"><i class="far fa-file-pdf fa-2x"></i> Export PDF</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body py-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead>
+                      <tr class="text-center">
+                        <th scope="col">BALANCE</th>
+                        <th scope="col">AMOUNT</th>
+                        <th scope="col">TYPE</th>
+                        <th scope="col">DESCRIPTION</th>
+                        <th scope="col">DATE</th>
+                        <th scope="col">VOUCHER</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="transaccione of transacciones" v-cloak class="text-center">
+                        <td>{{formatoMoneda(transaccione.balance)}}</td>
+                        <td :class="[ transaccione.type == 'CREDIT' ? 'transaction-credit' : 'transaction-debit' ]">{{formatoMoneda(transaccione.amount)}}</td>
+                        <td>{{transaccione.type}}</td>
+                        <td>{{transaccione.description}}</td>
+                        <td>{{formatoFecha(transaccione.date)}}</td>
+                        <td><i class="fas fa-download btn" @click="exportarComprobantePDF(transaccione.id)"></i></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>  
+
+          </div>
+        </section>
+
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2666.5540201602043" preserveAspectRatio="xMaxYMax slice" class="bg-svg1"><g transform="scale(5.280304990416246)"><rect x="0" y="0" width="252.5" height="505" fill="#F4F3EF"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/></g></svg>
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2666.5540201602043" preserveAspectRatio="xMaxYMax slice" class="bg-svg2"><g transform="scale(5.280304990416246)"><rect x="0" y="0" width="252.5" height="505" fill="#F4F3EF"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/></g></svg>
+      </main>
+
+      <footer class="container-fluid px-0">
+        <div class="row  py-3 px-3 m-0">
+
+          <div class="col-md-9 col-sm-9 col-12 d-flex align-items-center justify-content-center justify-content-sm-start">
+            <span class="text-muted fw-light">&copy; 2021 Mindhub Brothers Bank.</span>
+          </div>
+      
+          <ul class="col-md-3 col-sm-3 col-12 justify-content-center justify-content-sm-end list-unstyled d-flex align-items-center m-0">
+            <li><a class="text-muted" href="https://www.instagram.com/mindhub_la/"><i class="fab fa-instagram fa-lg"></i></a></li>
+            <li class="ms-3"><a class="text-muted" href="https://www.facebook.com/MindHubLa/"><i class="fab fa-facebook fa-lg"></i></a></li>
+            <li class="ms-3"><a class="text-muted" href="https://www.linkedin.com/school/mindhub-la/"><i class="fab fa-linkedin fa-lg"></i></a></li>
+            <li class="ms-3"><a class="text-muted" href="https://www.youtube.com/channel/UC-Y8nJdZwbfvwodLVDUkMlA"><i class="fab fa-youtube fa-lg"></i></a></li>
+          </ul>
+        </div>
+      </footer>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/account.js"></script>
+  </body>
+</html>

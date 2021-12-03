@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/bd2f9cbaf2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <link rel="stylesheet" href="../styles/main.css">
+    <title>Accounts</title>
+</head>
+<body class="vh-100 d-flex bg-isabelline">
+  <div class="container-fluid p-0 d-flex flex-column justify-content-between" id="app">
+
+    <nav class="navbar navbar-expand-md navbar-light border-bottom">
+        <div class="container-fluid">
+            <a class="navbar-brand p-0" href="./accounts.html">
+                <img src="../assets/logo.png" alt="logo banco" height="60">
+            </a>
+            <a class="navbar-brand p-0 me-0" href="./accounts.html">
+                <img src="../assets/logo-negro.png" alt="logo con letras negras" height="60">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-lg-0 align-items-center">
+                    <li class="nav-item mx-2">
+                      <a class="nav-link" href="./accounts.html">ACCOUNTS</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                      <a class="nav-link" href="./cards.html">CARDS</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                      <a class="nav-link" href="./transfers.html">TRANSFERS</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                      <a class="nav-link" href="./loans.html">LOANS</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-2x"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><h6 class="dropdown-header">Welcome {{clientes.firstName}}!</h6></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i>  My profile</a></li>
+                        <li><a class="dropdown-item" href="" @click="logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        
+                      </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid p-0 py-5" v-cloak>
+      <section class="container">
+        <div class="row justify-content-center">
+          <!-- card de cuentas -->
+
+          <!-- <div class="row">
+            <div class="col-lg-3 col-6 text-center">
+              <div class="border border-light border-1 border-radius-md py-3">
+                <h6 class="text-primary text-gradient mb-0">Earnings</h6>
+                <h4 class="font-weight-bolder"><span class="small">$ </span>
+                  <span id="state1" countTo="23980"></span>
+                </h4>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-6 text-center">
+              <div class="border border-light border-1 border-radius-md py-3">
+                <h6 class="text-primary text-gradient mb-0">Customers</h6>
+                <h4 class="font-weight-bolder"><span class="small">$ </span>
+                  <span id="state2" countTo="2400"></span>
+                </h4>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="col-lg-4 col-md-6 col-sm-9 col-10" v-for="cuenta of cuentas">
+            <div class="card mb-4 shadow">
+              <div class="row m-0">
+                <div class="col-9 col-sm-9 col-md-9 col-lg-10 col-xl-9 pe-0">
+                  <div class="card-body px-0">
+                    <h4 class="card-title mb-3" v-if="cuenta.type == 'SAVING'">
+                      <cite title="Saving Account">
+                        <i class="fas fa-piggy-bank text-success"></i>
+                      </cite> SA {{cuenta.number}}                      
+                    </h4>
+                    <h4 class="card-title mb-3" v-if="cuenta.type == 'CURRENT'">
+                      <cite title="Current Account">
+                        <i class="fas fa-money-check-alt text-warning"></i>
+                      </cite> CA {{cuenta.number}}
+                    </h4>
+                    <h6 class="card-subtitle text-muted">Balance</h6>
+                    <p class="card-text fs-3">{{formatoMoneda(cuenta.balance)}}</p>
+                  </div>
+                </div>
+                <div class="col-3 col-sm-3 col-md-3 col-lg-2 col-xl-3 d-flex justify-content-center align-items-center">
+                  <div class="dropdown">
+                    <button class="btn btn-outline-secondary border-0 rounded-3 " type="button" id="drop" data-bs-toggle="dropdown" aria-expanded="false">
+                      <cite title="See more options">
+                        <i class="fas fa-ellipsis-v fa-3x"></i>
+                      </cite>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="drop">
+                      <li><a class="dropdown-item" :href="'/web/account.html?id=' + cuenta.id"><i class="fas fa-exchange-alt me-2"></i>See transactions</a></li>
+                      <li><span role="button" class="dropdown-item" @click="deleteAccount(cuenta.id)"><i class="far fa-trash-alt me-2"></i>Delete account</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-footer bg-white pt-1">
+                  <i class="far fa-calendar-alt"></i>
+                  Date creation: {{formatoFecha(cuenta.creationDate)}}
+              </div>
+            </div>
+          </div>
+          
+          <!-- boton de agregar una cuenta -->
+          <div class="col-lg-4 col-md-6 col-sm-6 d-flex justify-content-center" v-if="cuentas.length<3 && cuentas.length != 0">
+            <div class="align-self-center mb-5 shadow">
+              <button type="button" class="btn btn-outline-secondary" @click="createAccount"><cite title="Add account"><i class="fas fa-plus fa-2x"></i></cite></button>
+            </div>
+          </div>
+          
+          <!-- card con boton para crear su primera cuenta -->
+          <div class="col d-flex justify-content-center" v-if="cuentas.length == 0">
+            <div class="mb-5 card shadow">  
+              <div class="row m-0">
+                <div class="col-10 col-sm-9 col-md-9">
+                  <div class="card-body px-0">
+                    <p class="card-text">Don't have an account? Order one here.</p>
+                  </div>
+                </div>
+
+                <div class="col-2 col-sm-3 col-md-3 d-flex justify-content-center align-items-center">
+                  <button type="button" class="btn btn-outline-secondary border-0 rounded-3" @click="createAccount">
+                    <cite title="Create account">
+                      <i class="fas fa-file-invoice-dollar fa-3x"></i>
+                    </cite>  
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+        
+      <section class="container">
+        <div class="row justify-content-center">
+          <!-- boton de pedir su primer prestamo -->
+          <div class="col d-flex justify-content-center" v-if="prestamos.length == 0">
+            <div class="mb-5 card shadow">  
+              <div class="row m-0">
+                <div class="col-10 col-sm-9 col-md-9">
+                  <div class="card-body px-0">
+                    <p class="card-text">Need money? We have loans available up to $500.000</p>
+                  </div>
+                </div>
+
+                <div class="col-2 col-sm-3 col-md-3 d-flex justify-content-center align-items-center">
+                  <button type="button" class="btn btn-outline-secondary border-0 rounded-3" onclick="window.location.href = '/web/loan-application.html'">
+                    <cite title="Apply now">
+                      <i class="fas fa-hand-holding-usd fa-3x"></i>
+                    </cite>  
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- tabla de prestamos registrados -->
+          <div class="row" v-else>
+            <div class="col-md-9">
+              <div class="card shadow mb-5">
+                <div class="card-header bg-white border-bottom-0">
+                  <h4 class="card-title my-0">Loan list</h4>
+                </div>
+                <div class="card-body py-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                          <thead>
+                          <tr class="text-center">
+                              <th scope="col">ID</th>
+                              <th scope="col">AMOUNT</th>
+                              <th scope="col">TYPE</th>
+                              <th scope="col">PAYMENTS</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="prestamo of prestamos" class="text-center">
+                              <td>{{prestamo.id}}</td>
+                              <td>{{formatoMoneda(prestamo.amount)}}</td>
+                              <td>{{prestamo.name}}</td>
+                              <td>{{prestamo.payments}}</td>
+                            </tr>
+                          </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- boton de pedir un prestamo -->
+            <div class="col-md-3">
+              <div class="mb-5 card shadow botonPrestamo">
+                <div class="row m-0 pt-2">
+
+                  <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary border-0 rounded-3" onclick="window.location.href = '/web/loan-application.html'">
+                      <cite title="Apply now">
+                        <i class="fas fa-hand-holding-usd fa-3x"></i>
+                      </cite>  
+                    </button>
+                  </div>
+
+                </div>
+                
+                <div class="row m-0">
+                  <div class="card-body">
+                    <p class="card-text">Need money? Apply now for our loans</p>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2666.5540201602043" preserveAspectRatio="xMaxYMax slice" class="bg-svg1"><g transform="scale(5.280304990416246)"><rect x="0" y="0" width="252.5" height="505" fill="#F4F3EF"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#BAFF43"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/></g></svg>
+      <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2666.5540201602043" preserveAspectRatio="xMaxYMax slice" class="bg-svg2"><g transform="scale(5.280304990416246)"><rect x="0" y="0" width="252.5" height="505" fill="#F4F3EF"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="15.78" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="78.91" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="78.91" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="142.03" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="205.16" width="31.56" height="31.56" fill="#0000FF"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="205.16" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="268.28" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="331.41" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="394.53" width="31.56" height="31.56" fill="#000000"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="15.78" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="78.91" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#0000FF"/><rect x="142.03" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/><rect x="205.16" y="457.66" width="31.56" height="31.56" fill="#000000"/></g></svg>
+    </main>
+
+    <footer class="container-fluid px-0">
+      <div class="row  py-3 px-3 m-0">
+
+        <div class="col-md-9 col-sm-9 col-12 d-flex align-items-center justify-content-center justify-content-sm-start">
+          <span class="text-muted fw-light">&copy; 2021 Mindhub Brothers Bank.</span>
+        </div>
+    
+        <ul class="col-md-3 col-sm-3 col-12 justify-content-center justify-content-sm-end list-unstyled d-flex align-items-center m-0">
+          <li><a class="text-muted" href="https://www.instagram.com/mindhub_la/"><i class="fab fa-instagram fa-lg"></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="https://www.facebook.com/MindHubLa/"><i class="fab fa-facebook fa-lg"></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="https://www.linkedin.com/school/mindhub-la/"><i class="fab fa-linkedin fa-lg"></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="https://www.youtube.com/channel/UC-Y8nJdZwbfvwodLVDUkMlA"><i class="fab fa-youtube fa-lg"></i></a></li>
+        </ul>
+      </div>
+    </footer>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../js/accounts.js"></script>
+</body>
+</html>
