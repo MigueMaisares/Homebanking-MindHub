@@ -2,8 +2,6 @@ package com.mindhub.homebanking.dtos;
 
 import com.mindhub.homebanking.models.Loan;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import java.util.ArrayList;
 import java.util.List;
 
