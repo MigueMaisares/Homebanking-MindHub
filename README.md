@@ -1,4 +1,4 @@
-# Homebanking-MindHub
+# Homebanking - MindHub Brothers Bank
 Proyecto JAVA de un Homebanking
 Homebanking En este proyecto desarrolle un Homebanking con todas sus funcionalidades utilizando Java con los framework Spring, Spring Boot, Spring Security y algunas otras dependencias como para generar PDF o para mandar un mail. Como building tool utilice Gradle para automatizar y del lado del front utilice el framework Vue.js.
 
